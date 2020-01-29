@@ -34,25 +34,51 @@ class mapi:
         self.height = len(map_data)
         self.width = len(map_data[0])
         
-        self.branch(self.ax,self.ay)
-        
+        #Initial nodes branch:
+        if self.ay != 0:
+            if self.map_data[self.ay-1][self.ax] == 0:
+                self.map_data[self.ay-1][self.ax] = node(1, distance(self.ax, self.ay-1, self.bx, self.by) , "d")
+        if self.ay != self.height - 1:
+            if self.map_data[self.ay+1][self.ax] == 0:
+                self.map_data[self.ay+1][self.ax] = node(1, distance(self.ax, self.ay+1, self.bx, self.by) , "u")
+        if self.ax != 0:
+            if self.map_data[self.ay][self.ax-1] == 0:
+                self.map_data[self.ay][self.ax-1] = node(1, distance(self.ax-1, self.ay, self.bx, self.by) , "r")
+        if self.ax != self.width - 1:
+            if self.map_data[self.ay][self.ax+1] == 0:
+                self.map_data[self.ay][self.ax+1] = node(1, distance(self.ax+1, self.ay, self.bx, self.by) , "l")
+
+      
     def branch(self,x,y):
         #Up
         if y != 0:
             if self.map_data[y-1][x] == 0:
-                self.map_data[y-1][x] = node(distance(x, y, self.ax, self.ay), distance(x, y, self.bx, self.by) , "d")
+                self.map_data[y-1][x] = node(self.map_data[y][x].g + 1, distance(x, y-1, self.bx, self.by) , "d")
+            elif isinstance(self.map_data[y-1][x],node):
+                if node(self.map_data[y][x].g + 1, distance(x, y-1, self.bx, self.by) , "d").f < self.map_data[y-1][x].f:
+                    self.map_data[y-1][x] = node(self.map_data[y][x].g + 1, distance(x, y-1, self.bx, self.by))
+        
         #Down
         if y != self.height - 1:
             if self.map_data[y+1][x] == 0:
-                self.map_data[y+1][x] = node(distance(x, y, self.ax, self.ay), distance(x, y, self.bx, self.by) , "u")
+                self.map_data[y+1][x] = node(self.map_data[y][x].g + 1, distance(x, y+1, self.bx, self.by) , "u")
+            elif isinstance(self.map_data[y+1][x],node):
+                if node(self.map_data[y][x].g + 1, distance(x, y+1, self.bx, self.by) , "d").f < self.map_data[y+1][x].f:
+                    self.map_data[y+1][x] = node(self.map_data[y][x].g + 1, distance(x, y+1, self.bx, self.by))
         #Left
         if x != 0:
             if self.map_data[y][x-1] == 0:
-                self.map_data[y][x-1] = node(distance(x, y, self.ax, self.ay), distance(x, y, self.bx, self.by) , "r")
+                self.map_data[y][x-1] = node(self.map_data[y][x].g + 1, distance(x-1, y, self.bx, self.by) , "r")
+            elif isinstance(self.map_data[y][x-1],node):
+                if node(self.map_data[y][x].g + 1, distance(x-1, y, self.bx, self.by) , "d").f < self.map_data[y][x-1].f:
+                    self.map_data[y][x-1] = node(self.map_data[y][x].g + 1, distance(x-1, y, self.bx, self.by))
         #Right
         if x != self.width - 1:
             if self.map_data[y][x+1] == 0:
-                self.map_data[y][x+1] = node(distance(x, y, self.ax, self.ay), distance(x, y, self.bx, self.by) , "l")
+                self.map_data[y][x+1] = node(self.map_data[y][x].g + 1, distance(x+1, y, self.bx, self.by) , "l")
+            elif isinstance(self.map_data[y][x+1],node):
+                if node(self.map_data[y][x].g + 1, distance(x+1, y, self.bx, self.by) , "d").f < self.map_data[y][x+1].f:
+                    self.map_data[y][x+1] = node(self.map_data[y][x].g + 1, distance(x+1, y, self.bx, self.by))
 
     def check(self):
         for i in range(self.height):
@@ -153,7 +179,7 @@ map_data = [
     ]
 
 
-map1 = mapi([7,2],[7,5],map_data)
+map1 = mapi([7,2],[6,5],map_data)
+
+
 map1.find_path_draw()
-
-
